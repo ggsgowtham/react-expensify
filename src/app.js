@@ -1,43 +1,33 @@
-// import validator from 'validator';
-import  React  from 'react';
-import  ReactDOM from 'react-dom';
-import IndecisionApp from './components/Indecision-app';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import AppRouter from './routers/AppRouter';
+import configureStore from './store/configureStore';
+import { addExpense } from './actions/expenses';
+import { setTextFilter } from './actions/filters';
+import getVisibleExpenses from './selectors/expenses';
 import 'normalize.css/normalize.css';
 import './styles/styles.scss';
 
-ReactDOM.render(<IndecisionApp />, document.getElementById('app'));
+const store = configureStore();
 
-// class OldSyntax {
-//     constructor() {
-//         this.name="GGS";
-//     }
-// }
-// const OldSyntax = new OldSyntax();
-// console.log(OldSyntax);
+store.dispatch(addExpense({ description: 'Water bill', amount: 4500 }));
+store.dispatch(addExpense({ description: 'Gas bill', createdAt: 1000 }));
+store.dispatch(addExpense({ description: 'Rent', amount: 1096 }));
+// store.dispatch(setTextFilter('water'));
 
+// setTimeout(() => {
+//   store.dispatch(setTextFilter('bill'));
+// }, 3000)
 
-// class NewSyntax {
-//     name = 'GGS';
-// }
+const state = store.getState();
+const visibleExpenses = getVisibleExpenses(state.expenses, state.filters);
+//console.log(visibleExpenses);
 
-// const newSyntax = new NewSyntax();
-// console.log(newSyntax);
+const jsx = (
+  <Provider store={store}>
+    <AppRouter />
+  </Provider>
+);
 
-
-
-// const Layout = (props) => {
-//     return (
-//         <div>
-//             <p>header</p>
-//             {props.content}
-//             <p>footer</p>
-//         </div>
-//     )
-// };
-
-// const template = (
-//     <div>
-//         <h1>Page Title</h1>
-//         <p>This is my page</p>
-//     </div>
-// )
+ReactDOM.render(jsx, document.getElementById('app'));
